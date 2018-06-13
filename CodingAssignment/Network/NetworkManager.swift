@@ -1,5 +1,5 @@
 //
-//  Constants.swift
+//  NetworkManager.swift
 //  CodingAssignment
 //
 //  Created by Mani on 13/06/18.
@@ -8,5 +8,4 @@
 
 import UIKit
 
-let ACModelprefix = "item"
-let NetworkStatusOffline = "No Connection"
+

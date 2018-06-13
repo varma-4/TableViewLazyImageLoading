@@ -15,7 +15,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        // Create a window and with Screen's Bounds
+        window = UIWindow(frame: UIScreen.main.bounds)
+        // Embed HomeTableViewController in Naviagtion Controller
+        let homeVC = UINavigationController(rootViewController: HomeTableViewController())
+        window?.rootViewController = homeVC
+        window?.makeKeyAndVisible()
+        
         return true
     }
 
