@@ -10,6 +10,15 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
     
+    lazy var tableRefreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action:
+            #selector(self.handleRefresh(_:)),
+                                 for: UIControlEvents.valueChanged)
+        refreshControl.tintColor = UIColor.black
+        return refreshControl
+    }()
+    
     fileprivate var itemsList = [ACModel]() {
         didSet {
             DispatchQueue.main.async { [weak self] in
@@ -38,6 +47,11 @@ class HomeTableViewController: UITableViewController {
         super.didReceiveMemoryWarning()
     }
     
+    @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
+        fetchItems()
+        refreshControl.endRefreshing()
+    }
+    
     func registerCustomCell() {
         self.tableView.register(HomeTableViewCell.self, forCellReuseIdentifier: TABLE_REUSE_IDENTIFIER)
     }
@@ -47,6 +61,18 @@ class HomeTableViewController: UITableViewController {
         self.view.backgroundColor = .white
         // Set TableView footerView
         self.tableView.tableFooterView = UIView()
+        // Set refresh Control for tableView for pulling latest data from Server
+        self.refreshControl = tableRefreshControl
+        
+        // Set tableView to SafeAreaGuides for clean design in iPhone X
+        if #available(iOS 11.0, *) {
+            let safeAreaGuide = self.view.safeAreaLayoutGuide
+            self.tableView.leftAnchor.constraint(equalTo: safeAreaGuide.leftAnchor).isActive = true
+            self.tableView.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor).isActive = true
+            self.tableView.rightAnchor.constraint(equalTo: safeAreaGuide.rightAnchor).isActive = true
+            self.tableView.bottomAnchor.constraint(equalTo: safeAreaGuide.bottomAnchor).isActive = true
+        }
+        
     }
     
     func fetchItems() {
@@ -68,14 +94,20 @@ class HomeTableViewController: UITableViewController {
             do {
                 let jsonResponses = try JSONSerialization.jsonObject(with: utf8DataUnwrapped, options: JSONSerialization.ReadingOptions())
                 
-                if let itemsDictionary = jsonResponses as? [String : Any], let title = itemsDictionary[JSON_ITEM_TITLE] as? String, let itemsArray = itemsDictionary[JSON_DATA_ROWS] as? NSArray {
+                if let itemsDictionary = jsonResponses as? [String : Any], let title = itemsDictionary[JSON_ITEM_TITLE] as? String, var itemsArray = itemsDictionary[JSON_DATA_ROWS] as? [[String: Any]] {
                     // Update Navigation bar Title in Main Queue
                     DispatchQueue.main.async {
                         self.navigationItem.title = title
                     }
                     
+                    // Filter Array & remove objects where all values are null
+                    itemsArray = itemsArray.filter({
+                        !(($0[JSON_ITEM_TITLE] as? String) == nil && ($0[JSON_DATA_DESC] as? String) == nil && ($0[JSON_DATA_IMAGE] as? String) == nil)
+                    })
+                    
                     // Decode each itemDictionary object from the array using map
                     let decoder = JSONDecoder()
+                    
                     self.itemsList = try itemsArray.map({
                         return try decoder.decode(ACModel.self, from: JSONSerialization.data(withJSONObject: $0, options: .prettyPrinted) as Data)
                     })
@@ -102,25 +134,24 @@ extension HomeTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TABLE_REUSE_IDENTIFIER, for: indexPath) as? HomeTableViewCell else { return UITableViewCell() }
+        let item = itemsList[indexPath.row]
         
-        cell.itemTitle.text = itemsList[indexPath.row].itemTitle
-        cell.itemDescription.text = itemsList[indexPath.row].itemDescription
-        cell.itemImageView.image = nil
-        cell.itemDescription.numberOfLines = 5
+        cell.itemTitle.text = item.itemTitle
+        cell.itemDescription.text = item.itemDescription
+        cell.itemImageView.image = #imageLiteral(resourceName: "noImage")
+        cell.itemDescription.numberOfLines = item.itemDescription != nil ? cell.itemDescription.numberOfLines : 0
         
-        if let imageCached = imageCache.object(forKey: itemsList[indexPath.row].imageString as AnyObject) as? UIImage {
+        if let imageCached = imageCache.object(forKey: item.imageString as AnyObject) as? UIImage {
             cell.itemImageView.image = imageCached
         } else {
-            cell.itemImageView.loadImageWithURL(urlString: itemsList[indexPath.row].imageString)
+            cell.itemImageView.loadImageWithURL(urlString: item.imageString)
         }
-//        cell.imageView?.loadImageWithURL(urlString: itemsList[indexPath.row].imageString)
-//        cell.updateConstraintsIfNeeded()
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        return TABLE_VIEW_ESTIMATED_ROW_HEIGHT
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

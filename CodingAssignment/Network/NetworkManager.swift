@@ -49,7 +49,7 @@ class NetworkManager {
         
         let task = session.dataTask(with: request as URLRequest) { (data, response, error)  in
             guard let data = data, let urlResponse = response as? HTTPURLResponse else {
-                completion(nil, error)
+                completion(nil, nil)
                 return
             }
             if urlResponse.statusCode == 200 {

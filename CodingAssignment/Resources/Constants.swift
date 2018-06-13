@@ -14,4 +14,7 @@ let NETWORK_STATUS_OFFLINE = "No Connection"
 let JSON_URL_PATH = "https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json"
 let JSON_ITEM_TITLE = "title"
 let JSON_DATA_ROWS = "rows"
+let JSON_DATA_DESC = "description"
+let JSON_DATA_IMAGE = "imageHref"
 let TABLE_REUSE_IDENTIFIER = "tableViewCell"
+let TABLE_VIEW_ESTIMATED_ROW_HEIGHT: CGFloat = 100
