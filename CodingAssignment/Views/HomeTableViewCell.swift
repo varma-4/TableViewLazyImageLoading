@@ -66,16 +66,15 @@ class HomeTableViewCell: UITableViewCell {
     
     func setConstraints() {
         // ItemImageView Contraints
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-10.0-[v0(60)]", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemImageView]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-10.0@1000-[v0(<=60)]-10.0@500-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemImageView]))
+        let dictionary = ["imageView": itemImageView, "title": itemTitle, "desc": itemDescription]
+        addMultipleConstraints(withVFLStrings: ["|-10.0-[imageView(80)]", "V:|-10.0@1000-[imageView(<=80)]-10.0@500-|"], dictionary: dictionary)
         
         // ItemTitleLabel Constraints
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[v0]-10.0-[v1]-10.0-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemImageView, "v1": itemTitle]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-10.0@1000-[v0]", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemTitle]))
+        addMultipleConstraints(withVFLStrings: ["[imageView]-10.0-[title]-10.0-|", "V:|-10.0@1000-[title]"], dictionary: dictionary)
         
         // ItemDescriptionLabel Constraints
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[v1]-10-[v0]-10.0-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": itemDescription, "v1": itemImageView]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[v0]-10.0@1000-[v1]->=10.0@750-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemTitle, "v1": itemDescription]))
+        addMultipleConstraints(withVFLStrings: ["[imageView]-10-[desc]-10.0-|", "V:[title]-10.0@1000-[desc]->=10.0@750-|"], dictionary: dictionary)
+        
     }
     
 }

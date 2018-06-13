@@ -13,18 +13,7 @@ class NetworkManager {
     static let sharedManager = NetworkManager()
     
     func fetchJSONData(from urlString: String, completion: @escaping (_ data: Data?, _ error: Error?) -> Void) {
-        //If URL is empty passing back nil values
-        guard let url = URL(string: urlString) else {
-            completion(nil, nil)
-            return
-        }
-        
-        let session = URLSession.shared
-        let request = NSMutableURLRequest(url: url)
-        // Set requestMethod
-        request.httpMethod = "GET"
-        
-        let task = session.dataTask(with: request as URLRequest) { (data, _ , error)  in
+        urlSession(with: urlString) { (data, _, error) in
             // Convert data to UTF8 data
             guard let dataString = String.init(data: data!, encoding: String.Encoding.isoLatin1), let utf8Data = dataString.data(using: String.Encoding.utf8) else {
                 completion(nil, error)
@@ -32,22 +21,11 @@ class NetworkManager {
             }
             completion(utf8Data, error)
         }
-        task.resume()
-        
     }
     
     func downloadImage(with urlString: String, completion: @escaping (_ data: Data?, _ error: Error?) -> Void ) {
-        guard let url = URL(string: urlString) else {
-            completion(nil, nil)
-            return
-        }
         
-        let session = URLSession.shared
-        let request = NSMutableURLRequest(url: url)
-        // Set requestMethod
-        request.httpMethod = "GET"
-        
-        let task = session.dataTask(with: request as URLRequest) { (data, response, error)  in
+        urlSession(with: urlString) { (data, response, error) in
             guard let data = data, let urlResponse = response as? HTTPURLResponse else {
                 completion(nil, nil)
                 return
@@ -58,8 +36,24 @@ class NetworkManager {
             }
             completion(nil, error)
         }
-        task.resume()
         
+    }
+    
+    func urlSession(with urlString: String, completion: @escaping (Data?, URLResponse?, Error?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(nil, nil, nil)
+            return
+        }
+        
+        let request = NSMutableURLRequest(url: url)
+        // Set requestMethod to GET
+        request.httpMethod = "GET"
+        
+        let session = URLSession.shared
+        let task = session.dataTask(with: request as URLRequest) { (data, response, error)  in
+            completion(data, response, error)
+        }
+        task.resume()
     }
     
 }

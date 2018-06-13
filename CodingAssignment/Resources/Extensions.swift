@@ -51,3 +51,13 @@ extension UILabel {
     }
     
 }
+
+extension UIView {
+    
+    func addMultipleConstraints(withVFLStrings arrayOfVFL: [String], dictionary: [String: Any]) {
+        for eachString in arrayOfVFL {
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: eachString, options: NSLayoutFormatOptions(), metrics: nil, views: dictionary))
+        }
+    }
+    
+}
