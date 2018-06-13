@@ -10,6 +10,12 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
     
+    fileprivate var itemsList = [ACModel]() {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
+    
     override func loadView() {
         super.loadView()
         configureTableView()
@@ -44,6 +50,28 @@ class HomeTableViewController: UITableViewController {
         // Show Alert to user when Network is Offline
         if reachability.connection.description == NetworkStatusOffline {
             // TODO:- Show Alert
+        }
+        
+        NetworkManager.sharedManager.fetchJSONData(from: JSON_URL_PATH) { [weak self] (data, error) in
+            guard let utf8DataUnwrapped = data, let `self` = self else {
+                return
+            }
+
+            do {
+                let jsonResponses = try JSONSerialization.jsonObject(with: utf8DataUnwrapped, options: JSONSerialization.ReadingOptions())
+                
+                if let itemsDictionary = jsonResponses as? [String : Any], let title = itemsDictionary[JSON_ITEM_TITLE] as? String, let items = itemsDictionary[JSON_DATA_ROWS] as? [[String: Any]] {
+                    // Update Navigation bar Title in Main Queue
+                    DispatchQueue.main.async {
+                        self.navigationItem.title = title
+                        self.itemsList = items.map({
+                            return ACModel(dictionary: $0)
+                        })
+                    }
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
         }
         
     }

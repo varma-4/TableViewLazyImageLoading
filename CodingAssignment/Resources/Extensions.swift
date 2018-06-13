@@ -8,14 +8,10 @@
 
 import UIKit
 
-extension String {
-
-    func capitalizingFirstLetter() -> String {
-        return prefix(1).uppercased() + dropFirst()
-    }
+extension StringProtocol {
     
-    mutating func capitalizeFirstLetter() {
-        self = self.capitalizingFirstLetter()
+    var firstUppercased: String {
+        guard let first = first else { return "" }
+        return String(first).uppercased() + dropFirst()
     }
-
 }

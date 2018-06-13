@@ -17,7 +17,7 @@ class ACModel: NSObject {
     override func setValuesForKeys(_ keyedValues: [String: Any]) {
 
         for keyValuePair in keyedValues {
-            let itemKey = ACModelprefix + keyValuePair.key.capitalizingFirstLetter()
+            let itemKey = ACModelprefix + keyValuePair.key.firstUppercased
             let selector = NSSelectorFromString(itemKey)
             let responds = self.responds(to: selector)
 
