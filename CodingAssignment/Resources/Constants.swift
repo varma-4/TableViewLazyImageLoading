@@ -8,8 +8,8 @@
 
 import UIKit
 
-let ACModelprefix = "item"
-let NetworkStatusOffline = "No Connection"
+let AC_MODEL_PREFIX = "item"
+let NETWORK_STATUS_OFFLINE = "No Connection"
 
 let JSON_URL_PATH = "https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json"
 let JSON_ITEM_TITLE = "title"

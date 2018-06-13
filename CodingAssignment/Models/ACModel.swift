@@ -8,31 +8,17 @@
 
 import UIKit
 
-class ACModel: NSObject {
-
+struct ACModel: Codable {
+    
     var itemTitle: String?
     var itemDescription: String?
-    var itemImageHref: String?
-
-    override func setValuesForKeys(_ keyedValues: [String: Any]) {
-
-        for keyValuePair in keyedValues {
-            let itemKey = ACModelprefix + keyValuePair.key.firstUppercased
-            let selector = NSSelectorFromString(itemKey)
-            let responds = self.responds(to: selector)
-
-            if !responds {
-                continue
-            }
-
-            super.setValue(keyValuePair.value, forKey: keyValuePair.key)
-        }
+    var imageString: String?
+    
+    private enum CodingKeys: String, CodingKey {
+        case itemTitle = "title"
+        case itemDescription = "description"
+        case imageString = "imageHref"
     }
-
-    init(dictionary: [String: Any]) {
-        super.init()
-        setValuesForKeys(dictionary)
-    }
-
+    
 }
 

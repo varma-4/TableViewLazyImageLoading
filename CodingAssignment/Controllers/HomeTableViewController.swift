@@ -48,7 +48,7 @@ class HomeTableViewController: UITableViewController {
         }
         
         // Show Alert to user when Network is Offline
-        if reachability.connection.description == NetworkStatusOffline {
+        if reachability.connection.description == NETWORK_STATUS_OFFLINE {
             // TODO:- Show Alert
         }
         
@@ -60,14 +60,17 @@ class HomeTableViewController: UITableViewController {
             do {
                 let jsonResponses = try JSONSerialization.jsonObject(with: utf8DataUnwrapped, options: JSONSerialization.ReadingOptions())
                 
-                if let itemsDictionary = jsonResponses as? [String : Any], let title = itemsDictionary[JSON_ITEM_TITLE] as? String, let items = itemsDictionary[JSON_DATA_ROWS] as? [[String: Any]] {
+                if let itemsDictionary = jsonResponses as? [String : Any], let title = itemsDictionary[JSON_ITEM_TITLE] as? String, let itemsArray = itemsDictionary[JSON_DATA_ROWS] as? NSArray {
                     // Update Navigation bar Title in Main Queue
                     DispatchQueue.main.async {
                         self.navigationItem.title = title
-                        self.itemsList = items.map({
-                            return ACModel(dictionary: $0)
-                        })
                     }
+                    
+                    // Decode each itemDictionary object from the array using map
+                    let decoder = JSONDecoder()
+                    self.itemsList = try itemsArray.map({
+                        return try decoder.decode(ACModel.self, from: JSONSerialization.data(withJSONObject: $0, options: .prettyPrinted) as Data)
+                    })
                 }
             } catch {
                 print(error.localizedDescription)
