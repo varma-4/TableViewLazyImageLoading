@@ -13,30 +13,28 @@ class HomeTableViewCell: UITableViewCell {
     var itemImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .red
-        imageView.contentMode = UIViewContentMode.scaleAspectFill
+        imageView.contentMode = UIViewContentMode.scaleToFill
         return imageView
     }()
     
     var itemTitle: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .brown
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 1
+        label.numberOfLines = 0
         label.textColor = .black
         label.font = UIFont.boldSystemFont(ofSize: 14)
-        label.text = ""
+        label.text = "kjsghfkjdsf"
         return label
     }()
     
     var itemDescription: UILabel = {
         let label = UILabel()
-        label.backgroundColor = .green
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 1
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.byWordWrapping
         label.textColor = .black
         label.font = UIFont.systemFont(ofSize: 13)
-        label.text = ""
+        label.text = "kjshfgkjdsfhgkkshfgkjdshfkgjhdskjhgkdshgkdhkghkdhkghdskhgkdshgkl kdhgkdshgk dksjhgkjdshgkd kdhgkjdh"
         return label
     }()
 
@@ -66,16 +64,17 @@ class HomeTableViewCell: UITableViewCell {
     }
     
     func setConstraints() {
+        // TODO:- Using anchor Constraints as VFL doesn't support SafeAreaInsets
         // ItemImageView Contraints
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-10-[v0(50)]", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemImageView]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-10.0-[v0(50)]", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemImageView]))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-10.0@1000-[v0(<=50)]-10.0@500-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemImageView]))
         
         // ItemTitleLabel Constraints
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:v0-10-[v1]-10-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemImageView, "v1": itemTitle]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-10-[v0]", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemTitle]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[v0]-10.0-[v1]-10.0-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemImageView, "v1": itemTitle]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-10.0@1000-[v0]", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemTitle]))
         
         // ItemDescriptionLabel Constraints
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[v0]-10.0-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": itemDescription]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[v1]-10-[v0]-10.0-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": itemDescription, "v1": itemImageView]))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[v0]-10.0@1000-[v1]->=10.0@750-|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0":itemTitle, "v1": itemDescription]))
     }
     

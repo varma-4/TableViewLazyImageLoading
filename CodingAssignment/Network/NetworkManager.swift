@@ -36,6 +36,32 @@ class NetworkManager {
         
     }
     
+    func downloadImage(with urlString: String, completion: @escaping (_ data: Data?, _ error: Error?) -> Void ) {
+        guard let url = URL(string: urlString) else {
+            completion(nil, nil)
+            return
+        }
+        
+        let session = URLSession.shared
+        let request = NSMutableURLRequest(url: url)
+        // Set requestMethod
+        request.httpMethod = "GET"
+        
+        let task = session.dataTask(with: request as URLRequest) { (data, response, error)  in
+            guard let data = data, let urlResponse = response as? HTTPURLResponse else {
+                completion(nil, error)
+                return
+            }
+            if urlResponse.statusCode == 200 {
+                completion(data, error)
+                return
+            }
+            completion(nil, error)
+        }
+        task.resume()
+        
+    }
+    
 }
 
 

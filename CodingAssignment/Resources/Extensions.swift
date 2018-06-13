@@ -21,26 +21,22 @@ extension StringProtocol {
 
 extension UIImageView {
     
-    func loadImageWithURL(urlString:String) {
-        let url = URL(string: urlString)
-        image = nil
+    func loadImageWithURL(urlString: String?) {
         
-        if let imageCache = imageCache.object(forKey: urlString as AnyObject) as? UIImage {
-            self.image = imageCache
+        guard let urlStringUnWrapped = urlString else {
             return
         }
         
-        URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
-            if error != nil {
-                print("error")
+        NetworkManager.sharedManager.downloadImage(with: urlStringUnWrapped) { (data, error) in
+            guard let data = data, let imageDownloaded = UIImage.init(data: data) else {
                 return
             }
-            DispatchQueue.main.async(execute: {
-                let imageToCache = UIImage(data: data!)
-                imageCache.setObject(imageToCache!, forKey: urlString as AnyObject)
-                self.image = imageToCache
-            })
-        }).resume()
+            
+            DispatchQueue.main.async {
+                self.image = imageDownloaded
+            }
+            imageCache.setObject(imageDownloaded, forKey: urlStringUnWrapped as AnyObject)
+        }
         
     }
 }

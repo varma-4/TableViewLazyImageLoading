@@ -12,7 +12,10 @@ class HomeTableViewController: UITableViewController {
     
     fileprivate var itemsList = [ACModel]() {
         didSet {
-            self.tableView.reloadData()
+            DispatchQueue.main.async { [weak self] in
+                guard let `self` = self else { return }
+                self.tableView.reloadData()
+            }
         }
     }
     
@@ -23,6 +26,7 @@ class HomeTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        registerCustomCell()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -32,6 +36,10 @@ class HomeTableViewController: UITableViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func registerCustomCell() {
+        self.tableView.register(HomeTableViewCell.self, forCellReuseIdentifier: TABLE_REUSE_IDENTIFIER)
     }
     
     func configureTableView() {
@@ -89,11 +97,34 @@ extension HomeTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return itemsList.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TABLE_REUSE_IDENTIFIER, for: indexPath) as? HomeTableViewCell else { return UITableViewCell() }
+        
+        cell.itemTitle.text = itemsList[indexPath.row].itemTitle
+        cell.itemDescription.text = itemsList[indexPath.row].itemDescription
+        cell.itemImageView.image = nil
+        cell.itemDescription.numberOfLines = 5
+        
+        if let imageCached = imageCache.object(forKey: itemsList[indexPath.row].imageString as AnyObject) as? UIImage {
+            cell.itemImageView.image = imageCached
+        } else {
+            cell.itemImageView.loadImageWithURL(urlString: itemsList[indexPath.row].imageString)
+        }
+//        cell.imageView?.loadImageWithURL(urlString: itemsList[indexPath.row].imageString)
+//        cell.updateConstraintsIfNeeded()
+        
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 200
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
     }
     
 }
