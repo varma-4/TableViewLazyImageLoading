@@ -19,7 +19,7 @@ class HomeTableViewController: UITableViewController {
         return refreshControl
     }()
     
-    fileprivate var itemsList = [ACModel]() {
+    var itemsList = [ACModel]() {
         didSet {
             DispatchQueue.main.async { [weak self] in
                 guard let `self` = self else { return }
@@ -48,8 +48,8 @@ class HomeTableViewController: UITableViewController {
     }
     
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
-        fetchItems()
         refreshControl.endRefreshing()
+        fetchItems()
     }
     
     func registerCustomCell() {
@@ -76,14 +76,10 @@ class HomeTableViewController: UITableViewController {
     }
     
     func fetchItems() {
-        guard let reachability = Reachability.init() else {
-            // TODO:- showAlert
-            return
-        }
-        
         // Show Alert to user when Network is Offline
-        if reachability.connection.description == NETWORK_STATUS_OFFLINE {
-            // TODO:- Show Alert
+        if !Reachability.isConnectedToNetwork() {
+            showAlert(with: "No Internet Connection")
+            return
         }
         
         NetworkManager.sharedManager.fetchJSONData(from: JSON_URL_PATH) { [weak self] (data, error) in
@@ -117,6 +113,12 @@ class HomeTableViewController: UITableViewController {
             }
         }
         
+    }
+    
+    func showAlert(with message: String) {
+        let alertController = UIAlertController(title: ALERT_TITLE, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        self.present(alertController, animated: true, completion: nil)
     }
 
 }

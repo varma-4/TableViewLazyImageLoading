@@ -13,24 +13,27 @@ class CodingAssignmentTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testViewControllerLoading() {
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.makeKeyAndVisible()
+        window.rootViewController = UINavigationController(rootViewController: HomeTableViewController())
+        XCTAssertNotNil(window.rootViewController, "HomeViewController cannot be instantiated")
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testTableViewComponents() {
+        let homeVC = HomeTableViewController()
+        _ = homeVC.view
+        XCTAssertNotNil(homeVC.tableView, "TableView is not available")
+        XCTAssertEqual(homeVC.tableView.backgroundColor, UIColor.white, "TableView is displaying some other background color")
+        XCTAssertEqual(homeVC.itemsList.count, 0, "Count should be zero when opened for the first time")
+        XCTAssertNotNil(homeVC.refreshControl, "refreshControl shouldn't be nil")
+        XCTAssertNotNil(homeVC.tableView.tableFooterView, "TableViewFooterView shouldn't be nil")
     }
     
 }

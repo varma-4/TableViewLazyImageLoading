@@ -11,14 +11,6 @@ import UIKit
 // Caching images to make not download the image 
 let imageCache = NSCache<AnyObject, AnyObject>()
 
-extension StringProtocol {
-    
-    var firstUppercased: String {
-        guard let first = first else { return "" }
-        return String(first).uppercased() + dropFirst()
-    }
-}
-
 extension UIImageView {
     
     func loadImageWithURL(urlString: String?) {

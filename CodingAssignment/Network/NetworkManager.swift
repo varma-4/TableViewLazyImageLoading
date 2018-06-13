@@ -30,7 +30,7 @@ class NetworkManager {
                 completion(nil, nil)
                 return
             }
-            if urlResponse.statusCode == 200 {
+            if urlResponse.statusCode == API_SUCCESS_CODE {
                 completion(data, error)
                 return
             }
@@ -47,7 +47,7 @@ class NetworkManager {
         
         let request = NSMutableURLRequest(url: url)
         // Set requestMethod to GET
-        request.httpMethod = "GET"
+        request.httpMethod = HTTP_REQUEST_GET
         
         let session = URLSession.shared
         let task = session.dataTask(with: request as URLRequest) { (data, response, error)  in
