@@ -137,7 +137,6 @@ extension HomeTableViewController {
         cell.itemTitle.text = item.itemTitle
         cell.itemDescription.text = item.itemDescription
         cell.itemImageView.image = #imageLiteral(resourceName: "noImage")
-        cell.itemDescription.numberOfLines = item.itemDescription != nil ? cell.itemDescription.numberOfLines : 0
         
         return cell
     }
