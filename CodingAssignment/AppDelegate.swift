@@ -18,10 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Create a window and with Screen's Bounds
         window = UIWindow(frame: UIScreen.main.bounds)
+        // Safely unwrap window's instance
+        guard let window = window else { return false }
         // Embed HomeTableViewController in Naviagtion Controller
         let homeVC = UINavigationController(rootViewController: HomeTableViewController())
-        window?.rootViewController = homeVC
-        window?.makeKeyAndVisible()
+        window.rootViewController = homeVC
+        window.makeKeyAndVisible()
         
         return true
     }

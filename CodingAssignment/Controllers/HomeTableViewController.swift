@@ -42,10 +42,6 @@ class HomeTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         fetchItems()
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
     
     @objc func handleRefresh(_ refreshControl: UIRefreshControl) {
         refreshControl.endRefreshing()
@@ -143,13 +139,19 @@ extension HomeTableViewController {
         cell.itemImageView.image = #imageLiteral(resourceName: "noImage")
         cell.itemDescription.numberOfLines = item.itemDescription != nil ? cell.itemDescription.numberOfLines : 0
         
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // Set UIImageView's Image only when cell is going to display
+        guard let cell = cell as? HomeTableViewCell else { return }
+        let item = itemsList[indexPath.row]
+
         if let imageCached = imageCache.object(forKey: item.imageString as AnyObject) as? UIImage {
             cell.itemImageView.image = imageCached
         } else {
             cell.itemImageView.loadImageWithURL(urlString: item.imageString)
         }
-        
-        return cell
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
